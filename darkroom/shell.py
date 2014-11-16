@@ -22,14 +22,23 @@ import yaml
 
 import darkroom.image_builder
 
-LOG = logging.getLogger(__name__)
+def _setup_logger():
+    logger = logging.getLogger()
+    log_handler = logging.StreamHandler(sys.stdout)
+    fmt = logging.Formatter(fmt='%(asctime)s %(name)s %(levelname)s: '
+                            '%(message)s', datefmt='%F %H:%M:%S')
+    log_handler.setFormatter(fmt)
+    logger.addHandler(log_handler)
+    logger.setLevel(logging.INFO)
 
 
 def main():
     parser = argparse.ArgumentParser(description='Build some openstack images')
     parser.add_argument('config_file')
 
-    LOG.setLevel(logging.DEBUG)
+    _setup_logger()
+    LOG = logging.getLogger(__name__)
+
     args = parser.parse_args()
 
     settings = None
@@ -38,7 +47,7 @@ def main():
     builder = darkroom.image_builder.get_image_builder(settings)
 
     def signal_handler(*args):
-        print "Interrupted. Cleaning up..."
+        LOG.info("Interrupted. Cleaning up...")
         builder.cleanup()
 
     signal.signal(signal.SIGINT, signal_handler)

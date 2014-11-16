@@ -59,7 +59,7 @@ class ImageBuilder(object):
     def _create_builder_instance(self):
         params = self._build_instance_settings
         nics = [{"net-id": params.net_id}]
-        print params.name
+        LOG.info("Launched build instance: %s", params.name)
         instance = self._nova_client.servers.create(name=params.name,
                                                     image=params.image,
                                                     nics=nics,
@@ -156,7 +156,7 @@ class ImageBuilder(object):
                 time.sleep(interval)  # give an extra 5 secs to get going
                 return True
             except socket.error as e:
-                print "SSH not available yet..."
+                LOG.info("SSH not available yet...")
                 time.sleep(interval)
         return False
 
@@ -182,7 +182,7 @@ class ImageBuilder(object):
         self._get_image_from_remote()
 
     def cleanup(self):
-        print "Cleanup not implemented yet."
+        LOG.info("Cleanup not implemented yet.")
         sys.exit(-1)
 
 
